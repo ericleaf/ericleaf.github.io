@@ -4,7 +4,7 @@ html { scroll-behavior:smooth; }
 body { margin:0; min-height:100vh; color:var(--ink); background:#f3f5f7; font-family:"Noto Sans TC",Arial,sans-serif; }
 body::before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.42; background-image:linear-gradient(rgba(48,76,110,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(48,76,110,.045) 1px,transparent 1px); background-size:38px 38px; }
 .shell { position:relative; max-width:1120px; min-height:100vh; margin:0 auto; padding:0 34px 28px; display:flex; flex-direction:column; }
-.nav { min-height:64px; margin:0 -34px; padding:0 34px; display:flex; align-items:center; justify-content:space-between; background:var(--nav-blue); }
+.nav { min-height:64px; margin:0 -34px; padding:0 34px; display:flex; align-items:center; justify-content:space-between; background:var(--nav-blue); box-shadow:0 0 0 100vmax var(--nav-blue); clip-path:inset(0 -100vmax); }
 .brand { color:#fff; text-decoration:none; font:500 1.4rem "DM Mono",monospace; letter-spacing:-.1em; }
 .brand span { color:#a9cdfd; }
 .nav-link,.text-link { color:#315f94; text-decoration:none; font-size:.9rem; }
