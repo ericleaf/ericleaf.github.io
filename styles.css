@@ -36,11 +36,11 @@ footer { margin-top:auto; padding:64px 0 4px; display:flex; justify-content:spac
 .profile-english { margin:8px 0 18px; color:var(--blue); font:500 1.1rem "DM Mono",monospace; letter-spacing:.01em; }
 .profile-role { margin:0; color:var(--text); font-size:1.05rem; line-height:1.8; }
 .resume-card h1 { margin:0 0 30px; color:var(--ink); font-size:1.35rem; letter-spacing:.08em; }
-.timeline { position:relative; margin:0; padding:0; list-style:none; }
-.timeline::before { content:""; position:absolute; top:9px; bottom:9px; left:119px; width:1px; background:#c9d7e8; }
+.timeline { --axis:120px; position:relative; margin:0; padding:0; list-style:none; }
+.timeline::before { content:""; position:absolute; top:9px; bottom:9px; left:var(--axis); width:1px; transform:translateX(-50%); background:#c9d7e8; }
 .timeline li { position:relative; display:grid; grid-template-columns:100px 1fr; column-gap:38px; padding:0 0 30px; }
 .timeline li:last-child { padding-bottom:0; }
 .timeline time { color:var(--blue); font:500 .82rem "DM Mono",monospace; line-height:1.65; white-space:nowrap; }
-.timeline li::after { content:""; position:absolute; top:7px; left:114px; width:11px; height:11px; border:2px solid var(--blue); border-radius:50%; background:#fff; }
+.timeline li::after { content:""; position:absolute; top:7px; left:var(--axis); width:11px; height:11px; border:2px solid var(--blue); border-radius:50%; transform:translateX(-50%); background:#fff; }
 .timeline p { margin:0; color:var(--text); font-size:1rem; line-height:1.8; }
-@media(max-width:650px) { .shell { padding:0 20px 22px; }.nav { margin:0 calc(50% - 50vw); padding:0 20px; }.hero { padding:15vh 0 9vh; }.grid { grid-template-columns:1fr; }.nav-link { font-size:.8rem; } footer { padding-top:42px; flex-direction:column; }.card { padding:22px; } .profile-card,.resume-card { margin-top:20px; padding:28px 24px; border-radius:12px; }.profile-card { margin-top:42px; }.timeline::before { left:94px; }.timeline li { grid-template-columns:76px 1fr; column-gap:26px; }.timeline li::after { left:89px; } }
+@media(max-width:650px) { .shell { padding:0 20px 22px; }.nav { margin:0 calc(50% - 50vw); padding:0 20px; }.hero { padding:15vh 0 9vh; }.grid { grid-template-columns:1fr; }.nav-link { font-size:.8rem; } footer { padding-top:42px; flex-direction:column; }.card { padding:22px; } .profile-card,.resume-card { margin-top:20px; padding:28px 24px; border-radius:12px; }.profile-card { margin-top:42px; }.timeline { --axis:95px; }.timeline li { grid-template-columns:80px 1fr; column-gap:34px; } }
