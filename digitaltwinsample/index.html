@@ -1,15 +1,587 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>本地數位分身模擬演示</title><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="twin.css"></head><body><main class="twin-demo"><header class="demo-hero"><p>LOCAL LLM / EXPERIMENTAL WALKTHROUGH</p><h1>本地數位分身模擬演示</h1><div>當我們已有問卷資料，如何不產生額外花費而測試提示詞？</div></header><section><span class="step-no">01</span><h2>我的電腦配置</h2><div class="specs"><article><b>GPU</b><strong>RTX 4050</strong><small>6 GB VRAM</small></article><article><b>Memory</b><strong>32 GB RAM</strong><small>本地推論與資料處理</small></article><article><b>System</b><strong>Windows</strong><small>Python + Ollama</small></article></div></section><section><span class="step-no">02</span><h2>建立本地模型環境</h2><ol class="walkthrough"><li><b>安裝 Python</b><code>winget install Python.Python.3.12</code></li><li><b>安裝 Ollama</b><code>winget install Ollama.Ollama</code></li><li><b>安裝套件</b><code>pip install pandas openpyxl ollama</code></li><li><b>測試模型</b><code>ollama pull qwen3:8b</code></li></ol></section><section><span class="step-no">03</span><h2>準備範例問卷資料</h2><p>測試所使用的 persona 設定資料其中一列如下：</p><div class="table-wrap"><table><thead><tr><th>ID</th><th>居住地</th><th>性別</th><th>年齡</th><th>教育程度</th><th>職業</th><th>家庭平均月收入</th><th>政府信心</th><th>核能安全態度</th><th>核廢料分類知識</th><th>真人答案</th></tr></thead><tbody><tr><td>493</td><td>臺中市西屯區</td><td>男性</td><td>40–50</td><td>大學</td><td>專業人士</td><td>100,001–150,000元</td><td>不太有信心</td><td>還算同意</td><td>回答錯誤或不知道</td><td>非常不同意</td></tr><tr><td colspan="11">註：原始測試資料共 15 列。</td></tr></tbody></table></div></section><section><span class="step-no">04</span><h2>以 Qwen 執行 15 個樣本</h2><details class="code-details"><summary>顯示 run_qwen_old.py 程式碼</summary><pre><code>import json, time, os
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>本地數位分身模擬演示</title><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="twin.css"></head><body><main class="twin-demo"><header class="demo-hero"><p>LOCAL LLM / EXPERIMENTAL WALKTHROUGH</p><h1>本地數位分身模擬演示</h1><div>當我們已有問卷資料，如何不產生額外花費而測試提示詞？</div></header><section><span class="step-no">01</span><h2>我的電腦配置</h2><div class="specs"><article><b>GPU</b><strong>RTX 4050</strong><small>6 GB VRAM</small></article><article><b>Memory</b><strong>32 GB RAM</strong><small>本地推論與資料處理</small></article><article><b>System</b><strong>Windows</strong><small>Python + Ollama</small></article></div></section><section><span class="step-no">02</span><h2>建立本地模型環境</h2><ol class="walkthrough"><li><b>安裝 Python</b><code>winget install Python.Python.3.12</code></li><li><b>安裝 Ollama</b><code>winget install Ollama.Ollama</code></li><li><b>安裝套件</b><code>pip install pandas openpyxl ollama</code></li><li><b>測試模型</b><code>ollama pull qwen3:8b</code></li></ol></section><section><span class="step-no">03</span><h2>準備範例問卷資料</h2><p>測試所使用的 persona 設定資料其中一列如下：</p><div class="table-wrap"><table><thead><tr><th>ID</th><th>居住地</th><th>性別</th><th>年齡</th><th>教育程度</th><th>職業</th><th>家庭平均月收入</th><th>政府信心</th><th>核能安全態度</th><th>核廢料分類知識</th><th>真人答案</th></tr></thead><tbody><tr><td>493</td><td>臺中市西屯區</td><td>男性</td><td>40–50</td><td>大學</td><td>專業人士</td><td>100,001–150,000元</td><td>不太有信心</td><td>還算同意</td><td>回答錯誤或不知道</td><td>非常不同意</td></tr><tr><td colspan="11">註：原始測試資料共 15 列。</td></tr></tbody></table></div></section><section><span class="step-no">04</span><h2>以 Qwen 執行 15 個樣本</h2><details class="code-details"><summary>顯示完整程式碼</summary><pre><code>import json
+import time
+import os
 import pandas as pd
 import ollama
 
+
+# =========================================================
+# 1. 基本設定
+# =========================================================
+
 INPUT_FILE = "survey.xlsx"
+
+OUTPUT_DIR = "output"
+
+OUTPUT_FILE = os.path.join(
+    OUTPUT_DIR,
+    "survey_taide_result.xlsx"
+)
+
 MODEL_NAME = "taide-8b:latest"
-# 以 build_persona、build_prompt、ask_qwen 與 main
-# 讀取 15 列、逐列呼叫、驗證 JSON、輸出 Excel。</code></pre></details><h3>提供給模型的提示詞：ID 493</h3><pre><code>居住地：臺中市西屯區；性別：男性；年齡：40歲~未滿50歲；教育：大學；職業：專業人士；月收入：100,001-150,000元。
-政府監督核廢料信心：不太有信心；核能安全態度：還算同意；核廢料分類知識：回答錯誤或不知道。
-請模擬受訪者本人；只能依所給資料推測；不得自行假設政治、家庭或專業資訊；使用繁中；不進行倡議或價值判斷；只能輸出 JSON。
-問題：是否同意在居住鄉鎮市區設置核廢料貯存場？選項：非常不同意／不太同意／還算同意／非常同意。</code></pre><div class="result"><b>單次執行輸出 JSON</b><pre><code>{
-  "predicted_answer": "不太同意",
-  "confidence": 0.85,
-  "reason": "對政府監督核廢料能力缺乏信心，且對核廢料分類知識不足，導致對存放安全性存疑"
+
+# 目前測試檔只有 15 筆，因此直接全部執行
+TEST_MODE = False
+
+# 用來記錄目前 Prompt／Persona 設計版本
+PROMPT_VERSION = "qwen_persona_v2"
+
+
+# =========================================================
+# 2. 預測目標欄位
+# =========================================================
+
+TARGET_COLUMN = (
+    '假如您現在居住的「鄉鎮市區」符合存放核廢料的科學條件，'
+    '請問您同不同意臺灣政府在「您居住的鄉鎮市區」蓋核廢料貯存場？'
+)
+
+
+# =========================================================
+# 3. Persona conditioning variables
+#
+# 注意：
+# 1. 不包含 ID
+# 2. 不包含 TARGET_COLUMN
+# 3. 這些欄位會提供給 Qwen
+# =========================================================
+
+PERSONA_COLUMNS = [
+    "居住地",
+    "性別",
+    "年齡",
+    "教育程度",
+    "職業",
+    "家庭平均月收入",
+    '請問您對「臺灣政府能夠妥善監督與管理核廢料」有沒有信心？',
+    '請問您同不同意「隨著科學技術的進步，未來核能發電將愈來愈安全」？',
+    '國際上把核廢料分為「低階核廢料」、「中階核廢料」以及「高階核廢料」，請問哪一種不包括在臺灣對核廢料的分類裡面？'
+]
+
+
+# =========================================================
+# 4. 建立 Persona
+# =========================================================
+
+def build_persona(row):
+
+    persona = f"""
+以下是一位真實臺灣問卷受訪者的既有背景與回答資料。
+
+【人口背景】
+
+居住地：{row["居住地"]}
+性別：{row["性別"]}
+年齡：{row["年齡"]}
+教育程度：{row["教育程度"]}
+職業：{row["職業"]}
+家庭平均月收入：{row["家庭平均月收入"]}
+
+【政策態度與認知】
+
+對「臺灣政府能夠妥善監督與管理核廢料」的信心：
+{row['請問您對「臺灣政府能夠妥善監督與管理核廢料」有沒有信心？']}
+
+對「隨著科學技術的進步，未來核能發電將愈來愈安全」的態度：
+{row['請問您同不同意「隨著科學技術的進步，未來核能發電將愈來愈安全」？']}
+
+核廢料分類知識：
+{row['國際上把核廢料分為「低階核廢料」、「中階核廢料」以及「高階核廢料」，請問哪一種不包括在臺灣對核廢料的分類裡面？']}
+"""
+
+    return persona.strip()
+
+
+# =========================================================
+# 5. 建立 Prompt
+# =========================================================
+
+def build_prompt(persona):
+
+    prompt = f"""
+{persona}
+
+現在請你模擬這位受訪者本人回答另一道問卷題目。
+
+【重要研究規則】
+
+1. 請以這位受訪者本人最可能的立場回答。
+
+2. 上述人口背景、政策態度、信任程度與核廢料知識狀態，
+   都是此受訪者已知的真實問卷資料，
+   請將它們視為模擬此人的依據。
+
+3. 不要以人工智慧、專家、政府官員、
+   政策分析者或研究者的角度回答。
+
+4. 不要回答你認為政策上「最正確」、
+   「最安全」或「最合理」的答案。
+
+5. 只能根據已提供的受訪者資料推測答案。
+
+6. 不要自行假設未提供的政黨傾向、
+   政治立場、家庭背景、核能專業知識
+   或其他個人資訊。
+
+7. 本研究情境為臺灣。
+
+8. 你的任務是預測這位受訪者在真實問卷中
+   最可能選擇的選項。
+
+9. 請使用繁體中文。
+
+10. 不需要進行政策倡議、安全教育、
+    科學知識說明或價值判斷。
+
+11. 只輸出指定 JSON，
+    不要輸出 JSON 以外的任何文字。
+
+【要預測的問題】
+
+假如您現在居住的「鄉鎮市區」符合存放核廢料的科學條件，
+請問您同不同意臺灣政府在「您居住的鄉鎮市區」
+蓋核廢料貯存場？
+
+請只從以下四個選項中選擇一個：
+
+- 非常不同意
+- 不太同意
+- 還算同意
+- 非常同意
+
+請依照以下 JSON 格式回答：
+
+{{
+    "predicted_answer": "四個選項其中之一",
+    "confidence": 0.00,
+    "reason": "用一句簡短繁體中文說明主要判斷依據"
+}}
+"""
+
+    return prompt.strip()
+
+
+# =========================================================
+# 6. 呼叫 Qwen
+# =========================================================
+
+def ask_qwen(persona):
+
+    prompt = build_prompt(persona)
+
+    try:
+
+        response = ollama.chat(
+            model=MODEL_NAME,
+            messages=[
+                {
+                    "role": "system",
+                    "content":
+                        "你是一個用於社會科學研究的模擬受訪者系統。"
+                        "你的任務是根據已知受訪者資料，"
+                        "預測該受訪者最可能選擇的問卷答案。"
+                        "你必須維持 persona 一致性，"
+                        "不能以人工智慧助理、政策專家、"
+                        "政府官員或研究者的立場回答。"
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            options={
+                "temperature": 0.7,
+                "seed": 42
+            }
+        )
+
+        text = response["message"]["content"].strip()
+
+        # -------------------------------------------------
+        # 清除模型可能加入的 Markdown code fence
+        # -------------------------------------------------
+
+        text = text.replace("```json", "")
+        text = text.replace("```JSON", "")
+        text = text.replace("```", "")
+        text = text.strip()
+
+        # -------------------------------------------------
+        # 解析 JSON
+        # -------------------------------------------------
+
+        result = json.loads(text)
+
+        predicted_answer = str(
+            result["predicted_answer"]
+        ).strip()
+
+        confidence = float(
+            result["confidence"]
+        )
+
+        reason = str(
+            result["reason"]
+        ).strip()
+
+        # -------------------------------------------------
+        # 檢查模型是否只使用有效選項
+        # -------------------------------------------------
+
+        valid_answers = [
+            "非常不同意",
+            "不太同意",
+            "還算同意",
+            "非常同意"
+        ]
+
+        if predicted_answer not in valid_answers:
+
+            raise ValueError(
+                f"模型回傳無效答案：{predicted_answer}"
+            )
+
+        # -------------------------------------------------
+        # 檢查 confidence 是否在 0～1
+        # -------------------------------------------------
+
+        if confidence < 0 or confidence > 1:
+
+            raise ValueError(
+                f"confidence 超出 0～1：{confidence}"
+            )
+
+        # -------------------------------------------------
+        # 正常回傳
+        # -------------------------------------------------
+
+        return {
+            "Qwen_預測答案": predicted_answer,
+            "Qwen_信心": confidence,
+            "Qwen_理由": reason,
+            "Qwen_原始輸出": text,
+            "Qwen_錯誤": ""
+        }
+
+    except Exception as e:
+
+        # -------------------------------------------------
+        # 若模型輸出失敗或 JSON 解析失敗
+        # -------------------------------------------------
+
+        return {
+            "Qwen_預測答案": None,
+            "Qwen_信心": None,
+            "Qwen_理由": None,
+            "Qwen_原始輸出": None,
+            "Qwen_錯誤": str(e)
+        }
+
+
+# =========================================================
+# 7. 主程式
+# =========================================================
+
+def main():
+
+    # -----------------------------------------------------
+    # 建立 output 資料夾
+    # -----------------------------------------------------
+
+    os.makedirs(
+        OUTPUT_DIR,
+        exist_ok=True
+    )
+
+    # -----------------------------------------------------
+    # 讀取 Excel
+    # -----------------------------------------------------
+
+    df = pd.read_excel(
+        INPUT_FILE
+    )
+
+    print("")
+    print("========================================")
+    print("Qwen 社會數位分身測試")
+    print("========================================")
+    print(f"模型：{MODEL_NAME}")
+    print(f"Prompt版本：{PROMPT_VERSION}")
+    print(f"總樣本數：{len(df)}")
+    print("")
+
+    # -----------------------------------------------------
+    # 確認必要欄位是否存在
+    # -----------------------------------------------------
+
+    required_columns = (
+        ["ID"]
+        + PERSONA_COLUMNS
+        + [TARGET_COLUMN]
+    )
+
+    missing_columns = [
+        column
+        for column in required_columns
+        if column not in df.columns
+    ]
+
+    if missing_columns:
+
+        print("")
+        print("找不到以下 Excel 欄位：")
+        print("")
+
+        for column in missing_columns:
+            print(f"- {column}")
+
+        raise ValueError(
+            "Excel 欄位名稱與程式設定不一致，請檢查 survey.xlsx。"
+        )
+
+    # -----------------------------------------------------
+    # 決定要跑多少筆資料
+    # -----------------------------------------------------
+
+    if TEST_MODE:
+
+        work_df = df.head(5).copy()
+
+    else:
+
+        work_df = df.copy()
+
+    results = []
+
+    total = len(work_df)
+
+    # -----------------------------------------------------
+    # 逐位建立 Persona 並呼叫 Qwen
+    # -----------------------------------------------------
+
+    for n, (_, row) in enumerate(
+        work_df.iterrows(),
+        start=1
+    ):
+
+        respondent_id = row["ID"]
+
+        print(
+            f"[{n}/{total}] "
+            f"正在模擬受訪者 ID={respondent_id}"
+        )
+
+        # 建立 Persona
+        persona = build_persona(row)
+
+        # 呼叫 Qwen
+        result = ask_qwen(persona)
+
+        # 紀錄模型與 Prompt 版本
+        result["Qwen_模型"] = MODEL_NAME
+        result["Prompt版本"] = PROMPT_VERSION
+
+        results.append(result)
+
+        # 稍微間隔，避免連續呼叫過於密集
+        time.sleep(0.2)
+
+    # -----------------------------------------------------
+    # 將預測結果轉成 DataFrame
+    # -----------------------------------------------------
+
+    result_df = pd.DataFrame(
+        results
+    )
+
+    # -----------------------------------------------------
+    # 合併原始問卷與 Qwen 預測結果
+    # -----------------------------------------------------
+
+    final_df = pd.concat(
+        [
+            work_df.reset_index(drop=True),
+            result_df.reset_index(drop=True)
+        ],
+        axis=1
+    )
+
+    # -----------------------------------------------------
+    # 判斷 Qwen 是否完全命中真人答案
+    # -----------------------------------------------------
+
+    final_df["Qwen_是否預測正確"] = (
+        final_df["Qwen_預測答案"]
+        ==
+        final_df[TARGET_COLUMN]
+    )
+
+    # -----------------------------------------------------
+    # 輸出 Excel
+    # -----------------------------------------------------
+
+    final_df.to_excel(
+        OUTPUT_FILE,
+        index=False
+    )
+
+    # -----------------------------------------------------
+    # 計算基本測試結果
+    # -----------------------------------------------------
+
+    valid_count = (
+        final_df["Qwen_預測答案"]
+        .notna()
+        .sum()
+    )
+
+    correct_count = (
+        final_df["Qwen_是否預測正確"]
+        .fillna(False)
+        .sum()
+    )
+
+    error_count = (
+        final_df["Qwen_錯誤"]
+        .astype(str)
+        .str.len()
+        .gt(0)
+        .sum()
+    )
+
+    # -----------------------------------------------------
+    # 顯示結果
+    # -----------------------------------------------------
+
+    print("")
+    print("========================================")
+    print("模擬完成")
+    print("========================================")
+
+    print(
+        f"成功產生預測："
+        f"{valid_count}/{total}"
+    )
+
+    print(
+        f"執行錯誤："
+        f"{error_count}/{total}"
+    )
+
+    print(
+        f"完全命中："
+        f"{correct_count}/{total}"
+    )
+
+    if total > 0:
+
+        accuracy = (
+            correct_count / total
+        )
+
+        print(
+            f"初步 Exact Accuracy："
+            f"{accuracy:.2%}"
+        )
+
+    print("")
+    print(
+        f"結果已輸出至：{OUTPUT_FILE}"
+    )
+
+    print("")
+    print("完成。")
+
+
+# =========================================================
+# 8. 執行主程式
+# =========================================================
+
+if __name__ == "__main__":
+    main()</code></pre></details><h3>提供給模型的提示詞：ID 493</h3><pre><code>你是一個用於社會科學研究的模擬受訪者系統。
+你的任務是根據已知受訪者資料，
+預測該受訪者最可能選擇的問卷答案。
+你必須維持 persona 一致性，
+不能以人工智慧助理、政策專家、
+政府官員或研究者的立場回答。
+
+以下是一位真實臺灣問卷受訪者的既有背景與回答資料。
+
+【人口背景】
+
+居住地：臺中市西屯區
+性別：男性
+年齡：40歲~未滿50歲
+教育程度：大學
+職業：專業人士
+家庭平均月收入：100,001-150,000元
+
+【政策態度與認知】
+
+對「臺灣政府能夠妥善監督與管理核廢料」的信心：
+不太有信心
+
+對「隨著科學技術的進步，未來核能發電將愈來愈安全」的態度：
+還算同意
+
+核廢料分類知識：
+回答錯誤或不知道
+
+現在請你模擬這位受訪者本人回答另一道問卷題目。
+
+【重要研究規則】
+
+1. 請以這位受訪者本人最可能的立場回答。
+
+2. 上述人口背景、政策態度、信任程度與核廢料知識狀態，
+   都是此受訪者已知的真實問卷資料，
+   請將它們視為模擬此人的依據。
+
+3. 不要以人工智慧、專家、政府官員、
+   政策分析者或研究者的角度回答。
+
+4. 不要回答你認為政策上「最正確」、
+   「最安全」或「最合理」的答案。
+
+5. 只能根據已提供的受訪者資料推測答案。
+
+6. 不要自行假設未提供的政黨傾向、
+   政治立場、家庭背景、核能專業知識
+   或其他個人資訊。
+
+7. 本研究情境為臺灣。
+8. 你的任務是預測這位受訪者在真實問卷中
+   最可能選擇的選項。
+
+9. 請使用繁體中文。
+
+10. 不需要進行政策倡議、安全教育、
+    科學知識說明或價值判斷。
+
+11. 只輸出指定 JSON，
+    不要輸出 JSON 以外的任何文字。
+
+【要預測的問題】
+
+假如您現在居住的「鄉鎮市區」符合存放核廢料的科學條件，
+請問您同不同意臺灣政府在「您居住的鄉鎮市區」
+蓋核廢料貯存場？
+
+請只從以下四個選項中選擇一個：
+
+- 非常不同意
+- 不太同意
+- 還算同意
+- 非常同意
+
+請依照以下 JSON 格式回答：
+
+{
+    "predicted_answer": "四個選項其中之一",
+    "confidence": 0.00,
+    "reason": "用一句簡短繁體中文說明主要判斷依據"
+}</code></pre><div class="result"><b>單次執行輸出 JSON</b><pre><code>{
+    "predicted_answer": "不太同意",
+    "confidence": 0.85,
+    "reason": "對政府監督核廢料能力缺乏信心，且對核廢料分類知識不足，導致對存放安全性存疑"
 }</code></pre></div></section><section><span class="step-no">05</span><h2>每個樣本重複執行 10 次</h2><p>移除固定 seed、維持 temperature = 0.7。15 位受訪者 × 10 次，共 150 次模擬；輸出 raw results、summary 與 population comparison。</p><div class="result"><b>重複實驗觀察</b><p>模型通常高度一致，但回答仍可能集中於中間選項。</p></div></section><section><span class="step-no">06</span><h2>解讀結果</h2><div class="two"><article><h3>可靠度</h3><p>同一 persona 的重複回答多半相近。</p></article><article><h3>效度</h3><p>高一致性不等於高 human fidelity；仍須以真人問卷逐筆驗證。</p></article></div><blockquote>High intra-persona consistency ≠ High human fidelity.</blockquote></section><section><span class="step-no">07</span><h2>未來延伸：串接 API</h2><p>完成本地前測與 prompt 凍結後，可串接 API 擴大樣本規模，並保留成本、模型版本與設定紀錄。</p></section><footer>本頁為本地端探索性模擬流程演示。</footer></main></body></html>
