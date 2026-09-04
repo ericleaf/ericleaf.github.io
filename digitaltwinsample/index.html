@@ -1,4 +1,59 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>本地數位分身模擬演示</title><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="twin.css"></head><body><main class="twin-demo"><header class="demo-hero"><p>LOCAL LLM / EXPERIMENTAL WALKTHROUGH</p><h1>本地數位分身模擬演示</h1><div>當我們已有問卷資料，如何不產生額外花費而測試提示詞？</div></header><section><span class="step-no">01</span><h2>我的電腦配置</h2><div class="specs"><article><b>GPU</b><strong>RTX 4050</strong><small>6 GB VRAM</small></article><article><b>Memory</b><strong>32 GB RAM</strong><small>本地推論與資料處理</small></article><article><b>System</b><strong>Windows</strong><small>Python + Ollama</small></article></div></section><section><span class="step-no">02</span><h2>建立本地模型環境</h2><ol class="walkthrough"><li><b>安裝 Python</b><code>winget install Python.Python.3.12</code></li><li><b>安裝 Ollama</b><code>winget install Ollama.Ollama</code></li><li><b>安裝套件</b><code>pip install pandas openpyxl ollama</code></li><li><b>測試模型</b><code>ollama pull qwen3:8b</code></li></ol><p>以下展示結果以Qwen3 8B模型為例。</p></section><section><span class="step-no">03</span><h2>準備範例問卷資料</h2><p>測試所使用的 persona 設定資料其中一列如下：</p><div class="table-wrap"><table><thead><tr><th>ID</th><th>居住地</th><th>性別</th><th>年齡</th><th>教育程度</th><th>職業</th><th>家庭平均月收入</th><th>政府信心</th><th>核能安全態度</th><th>核廢料分類知識</th><th>真人答案</th></tr></thead><tbody><tr><td>1760</td><td>彰化縣北斗鎮</td><td>女性</td><td>40–50</td><td>國、初中</td><td>家庭主婦</td><td>30,001-50,000元</td><td>非常沒有信心</td><td>還算同意</td><td>回答錯誤或不知道</td><td>非常不同意</td></tr><tr><td colspan="11">註：原始測試資料共 15 列。<br>原始題目：<br>Q35、請問您對「政府能夠妥善監督與管理核廢料」有沒有信心？<br>Q51、請問您同不同意「隨著科學技術的進步，未來核能發電將愈來愈安全」？<br>Q8、國際上把核廢料分為「低階核廢料」、「中階核廢料」以及「高階核廢料」，請問哪一種不包括在我國對核廢料的分類裡面？<br>Q14、假如您現在居住的「鄉鎮市區」符合存放核廢料的科學條件，請問您同不同意政府在「您居住的鄉鎮市區」蓋核廢料貯存場？</td></tr></tbody></table></div></section><section><span class="step-no">04</span><h2>以 Qwen3 執行 15 個樣本</h2><p>正確率：2/15（其中一次執行錯誤）</p><details class="code-details"><summary>顯示完整程式碼</summary><pre><code>import json
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>本地數位分身模擬演示</title>
+    <link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="twin.css">
+</head>
+<body>
+    <main class="twin-demo">
+        <header class="demo-hero">
+            <p>LOCAL LLM / EXPERIMENTAL WALKTHROUGH</p>
+            <h1>本地數位分身模擬演示</h1>
+            <div>當我們已有問卷資料，如何不產生額外花費而測試提示詞？</div>
+        </header>
+        <section>
+            <span class="step-no">01</span>
+            <h2>我的電腦配置</h2>
+            <div class="specs">
+                <article><b>GPU</b><strong>RTX 4050</strong><small>6 GB VRAM</small></article>
+                <article><b>Memory</b><strong>32 GB RAM</strong><small>本地推論與資料處理</small></article>
+                <article><b>System</b><strong>Windows</strong><small>Python + Ollama</small></article>
+            </div>
+        </section>
+        <section>
+            <span class="step-no">02</span>
+            <h2>建立本地模型環境</h2>
+            <ol class="walkthrough">
+                <li><b>安裝 Python</b><code>winget install Python.Python.3.12</code></li>
+                <li><b>安裝 Ollama</b><code>winget install Ollama.Ollama</code></li>
+                <li><b>安裝套件</b><code>pip install pandas openpyxl ollama</code></li>
+                <li><b>測試模型</b><code>ollama pull qwen3:8b</code></li>
+            </ol>
+            <p>以下展示結果以Qwen3 8B模型為例。</p>
+        </section>
+        <section>
+            <span class="step-no">03</span>
+            <h2>準備範例問卷資料</h2>
+            <p>測試所使用的 persona 設定資料其中一列如下：</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>居住地</th><th>性別</th><th>年齡</th><th>教育程度</th><th>職業</th><th>家庭平均月收入</th><th>政府信心</th><th>核能安全態度</th><th>核廢料分類知識</th><th>真人答案</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1760</td><td>彰化縣北斗鎮</td><td>女性</td><td>40–50</td><td>國、初中</td><td>家庭主婦</td><td>30,001-50,000元</td><td>非常沒有信心</td><td>還算同意</td><td>回答錯誤或不知道</td><td>非常不同意</td></tr>
+                        <tr><td colspan="11">註：原始測試資料共 15 列。<br>原始題目：<br>Q35、請問您對「政府能夠妥善監督與管理核廢料」有沒有信心？<br>Q51、請問您同不同意「隨著科學技術的進步，未來核能發電將愈來愈安全」？<br>Q8、國際上把核廢料分為「低階核廢料」、「中階核廢料」以及「高階核廢料」，請問哪一種不包括在我國對核廢料的分類裡面？<br>Q14、假如您現在居住的「鄉鎮市區」符合存放核廢料的科學條件，請問您同不同意政府在「您居住的鄉鎮市區」蓋核廢料貯存場？</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section>
+                <span class="step-no">04</span>
+                <h2>以 Qwen3 執行 15 個樣本</h2>
+                <p>正確率：2/15（其中一次執行錯誤）</p>
+                <details class="code-details"><summary>顯示完整程式碼</summary><pre><code>import json
 import time
 import os
 import pandas as pd
@@ -498,7 +553,11 @@ def main():
 # =========================================================
 
 if __name__ == "__main__":
-    main()</code></pre></details><h3>提供給模型的提示詞：ID 1760</h3><pre><code>你是一個用於社會科學研究的模擬受訪者系統。
+    main()</code>
+</pre>
+</details>
+    <h3>提供給模型的提示詞：ID 1760</h3>
+    <pre><code>你是一個用於社會科學研究的模擬受訪者系統。
 你的任務是根據已知受訪者資料，
 預測該受訪者最可能選擇的問卷答案。
 你必須維持 persona 一致性，
@@ -584,4 +643,55 @@ if __name__ == "__main__":
     "predicted_answer": "非常不同意",
     "confidence": 0.85,
     "reason": "因對政府管理核廢料缺乏信心，且居住地可能面臨安全風險"
-}</code></pre></div></section><section><span class="step-no">05</span><h2>每個樣本重複執行 10 次</h2><p>移除固定 seed、維持 temperature = 0.7。15 位受訪者 × 10 次，共 150 次模擬；輸出 raw results、summary 與 population comparison。</p><div class="result"><b>重複實驗觀察</b><p>模型通常高度一致，但回答仍可能集中於中間選項。</p></div><p>正確率：1/15（以多次執行之預測結果眾數是否命中真人答案計算）</p><p>ID 1760 在 10 次重複模擬中，有 7 次預測為「非常不同意」、3 次為「不太同意」；預測結果的眾數與真人回答相同。</p><div class="table-wrap"><table><thead><tr><th>答案</th><th>真人次數</th><th>真人比例</th><th>Qwen次數</th><th>Qwen比例</th></tr></thead><tbody><tr><td>非常不同意</td><td>9</td><td>60.0%</td><td>18</td><td>12.7%</td></tr><tr><td>不太同意</td><td>2</td><td>13.3%</td><td>66</td><td>46.5%</td></tr><tr><td>還算同意</td><td>1</td><td>6.7%</td><td>56</td><td>39.4%</td></tr><tr><td>非常同意</td><td>3</td><td>20.0%</td><td>2</td><td>1.4%</td></tr></tbody></table></div></section><section><span class="step-no">06</span><h2>解讀結果</h2><div class="two"><article><h3>可靠度</h3><p>同一 persona 的重複回答多半相近。</p></article><article><h3>效度</h3><p>高一致性不等於高 human fidelity；仍須以真人問卷逐筆驗證。</p></article></div><blockquote>High intra-persona consistency ≠ High human fidelity.</blockquote></section><section><span class="step-no">07</span><h2>未來延伸：串接 API</h2><p>完成本地前測與 prompt 凍結後，可串接 API 擴大樣本規模，並保留成本、模型版本與設定紀錄。</p></section><footer>本頁為本地端探索性模擬流程演示。</footer></main></body></html>
+}</code>
+                </pre>
+            </div>
+        </section>
+        <section>
+            <span class="step-no">05</span>
+            <h2>每個樣本重複執行 10 次</h2>
+            <p>移除固定 seed、維持 temperature = 0.7。15 位受訪者 × 10 次，共 150 次模擬；輸出 raw results、summary 與 population comparison。</p>
+            <div class="result">
+                <b>重複實驗觀察</b>
+                <p>模型通常高度一致，但回答仍可能集中於中間選項。</p>
+            </div>
+            <p>正確率：1/15（以多次執行之預測結果眾數是否命中真人答案計算）</p>
+            <p>ID 1760 在 10 次重複模擬中，有 7 次預測為「非常不同意」、3 次為「不太同意」；預測結果的眾數與真人回答相同。</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>答案</th><th>真人次數</th><th>真人比例</th><th>Qwen次數</th><th>Qwen比例</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>非常不同意</td><td>9</td><td>60.0%</td><td>18</td><td>12.7%</td></tr>
+                        <tr><td>不太同意</td><td>2</td><td>13.3%</td><td>66</td><td>46.5%</td></tr>
+                        <tr><td>還算同意</td><td>1</td><td>6.7%</td><td>56</td><td>39.4%</td></tr>
+                        <tr><td>非常同意</td><td>3</td><td>20.0%</td><td>2</td><td>1.4%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section>
+            <span class="step-no">06</span>
+            <h2>解讀結果</h2>
+            <div class="two">
+                <article>
+                    <h3>可靠度</h3>
+                    <p>同一 persona 的重複回答多半相近。</p>
+                </article>
+                <article>
+                    <h3>效度</h3>
+                    <p>高一致性不等於高 human fidelity；仍須以真人問卷逐筆驗證。</p>
+                </article>
+            </div>
+            <blockquote>High intra-persona consistency ≠ High human fidelity.</blockquote>
+        </section>
+        <section>
+            <span class="step-no">07</span>
+            <h2>未來延伸：串接 API</h2>
+            <p>完成本地前測與 prompt 凍結後，可串接 API 擴大樣本規模，並保留成本、模型版本與設定紀錄。</p>
+        </section>
+        <footer>本頁為本地端探索性模擬流程演示。</footer>
+    </main>
+</body>
+</html>
