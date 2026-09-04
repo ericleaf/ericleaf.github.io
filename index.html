@@ -10,12 +10,20 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="image/mark.ico" sizes="any">
   <link rel="stylesheet" href="styles.css">
+  <script src="nav.js" defer></script>
 </head>
 <body>
   <main class="shell profile-shell">
     <nav class="nav" aria-label="主選單">
       <a class="brand" href="/" aria-label="Eric Yeh 首頁">首頁<span>.</span></a>
-      <a class="nav-link" href="/digitaltwinsample/">數位分身研究 <span aria-hidden="true">↗</span></a>
+      <div class="nav-links">
+        <a href="/about/">關於我</a>
+        <a href="/works/">作品集</a>
+        <details class="research-menu">
+          <summary>研究 <span aria-hidden="true">⌄</span></summary>
+          <div class="research-dropdown"><a href="/digitaltwinsample/">建立大量數位分身</a></div>
+        </details>
+      </div>
     </nav>
 
     <section class="profile-card" aria-label="個人資料">
