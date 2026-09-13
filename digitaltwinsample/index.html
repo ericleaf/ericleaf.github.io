@@ -3,18 +3,46 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>本地數位分身模擬演示</title>
+    <title>本機數位分身模擬演示</title>
     <link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="twin.css">
 </head>
 <body>
     <main class="twin-demo">
         <header class="demo-hero">
             <p>LOCAL LLM / EXPERIMENTAL WALKTHROUGH</p>
-            <h1>本地數位分身模擬演示</h1>
+            <h1>本機數位分身模擬演示</h1>
             <div>當我們已有問卷資料，如何不產生額外花費而測試提示詞？</div>
         </header>
         <section>
             <span class="step-no">01</span>
+            <h2>前言</h2>
+            <div class="two">
+                <article>
+                    <h3>數位分身 (digital twin)</h3>
+                    <p>是指透過輸入真實實體之資料，以虛擬模型模擬而來的數位實體，可模擬真實世界的行為與狀態。</p>
+                    <p>用於社會科學調查時，又稱為矽樣本 (silicon sample)，其反映真實世界的能力，稱為演算法忠實度 (algorithmic fidelity) (Argyle et al., 2023)。</p>
+                </article>
+                <article>
+                    <h3>高放射性廢棄物最終處置</h3>
+                    <p>對核廢的恐懼、制度信任、程序公平與地方依附，均會影響最終處置設施設置的社會接受。</p>
+                    <p>研究資料取自於2025年真人民調資料，涵蓋高放射性廢棄物處置認知、政策態度、政府信任、程序與參與、補償、核能風險及社會人口背景。</p>
+                </article>
+            </div>
+        </section>
+        <section>
+            <span class="step-no">02</span>
+            <h2>研究問題</h2>
+            <ol class="research-questions">
+                <li>LLM數位分身構成的回答與真人有多大的一致性？</li>
+                <li>LLM數位分身能否重現真人問卷的態度關聯？</li>
+            </ol>
+            <figure class="research-figure">
+                <img src="image/pic1.png" alt="研究變數顯著影響示意圖">
+                <figcaption>本研究已有真人民調資料，且圖中所呈現的變數皆呈現顯著影響。<br>圖片來源：吳聲佑、蕭乃沂、葉宗諭，2026</figcaption>
+            </figure>
+        </section>
+        <section>
+            <span class="step-no">03</span>
             <h2>我的電腦配置</h2>
             <div class="specs">
                 <article><b>GPU</b><strong>RTX 4050</strong><small>6 GB VRAM</small></article>
@@ -23,7 +51,7 @@
             </div>
         </section>
         <section>
-            <span class="step-no">02</span>
+            <span class="step-no">04</span>
             <h2>建立本地模型環境</h2>
             <ol class="walkthrough">
                 <li><b>安裝 Python</b><code>winget install Python.Python.3.12</code></li>
@@ -34,7 +62,7 @@
             <p>以下展示結果以Qwen3 8B模型為例。</p>
         </section>
         <section>
-            <span class="step-no">03</span>
+            <span class="step-no">05</span>
             <h2>準備範例問卷資料</h2>
             <p>測試所使用的 persona 設定資料其中一列如下：</p>
             <div class="table-wrap">
@@ -82,7 +110,7 @@
             </div>
         </section>
         <section>
-                <span class="step-no">04</span>
+                <span class="step-no">06</span>
                 <h2>以 Qwen3 執行 15 個樣本</h2>
                 <p>正確率：2/15（其中一次執行錯誤）</p>
                 <details class="code-details"><summary>顯示完整程式碼</summary><pre><code>import json
@@ -680,7 +708,7 @@ if __name__ == "__main__":
             </div>
         </section>
         <section>
-            <span class="step-no">05</span>
+            <span class="step-no">07</span>
             <h2>每個樣本重複執行 10 次</h2>
             <p>移除固定 seed、維持 temperature = 0.7。15 位受訪者 × 10 次，共 150 次模擬；輸出 raw results、summary 與 population comparison。</p>
             <div class="result">
@@ -704,7 +732,7 @@ if __name__ == "__main__":
             </div>
         </section>
         <section>
-            <span class="step-no">06</span>
+            <span class="step-no">08</span>
             <h2>多模型比較</h2>
             <p>以下整理同一份 15 位受訪者問卷資料的本地數位分身測試。重複模擬用於觀察模型輸出的穩定性；單次測試則作為初步行為特徵比較。</p>
             <div class="table-wrap">
@@ -765,7 +793,7 @@ if __name__ == "__main__":
             </div>
         </section>
         <section>
-            <span class="step-no">07</span>
+            <span class="step-no">09</span>
             <h2>解讀結果</h2>
             <div class="two">
                 <article>
@@ -780,11 +808,42 @@ if __name__ == "__main__":
             <blockquote>High intra-persona consistency ≠ High human fidelity.</blockquote>
         </section>
         <section>
-            <span class="step-no">08</span>
+            <span class="step-no">10</span>
+            <h2>數位分身研究應注意的細節</h2>
+            <h3>研究設計方面：</h3>
+            <ul class="tips">
+                <li>Argyle 等人 (2023) 的實證研究顯示模型的溫度在 0.7 會比較接近人類 (但不是唯一答案)。</li>
+                <li>最強的模型不一定最像人，或更能反映人類行為 (Gao et al, 2025)。</li>
+                <li>同一角色設定、同樣提示詞的重複呼叫不能當作多人模擬 (Lin, 2026)。</li>
+                <li>角色設定、提示詞、語言、推理提示 (如「請像人類思考」) 都會對輸出結果有影響 (Gao et al, 2025)。</li>
+
+                <li>Lin (2026) 甚至主張應該使用開源權重模型作為模擬的預設選項，確保研究結果的可重現性。</li>
+            </ul>
+            <h3>報告研究結果方面：</h3>
+            <ul class="tips">
+                <li>Horton 等人 (2026) 指出研究者可能反覆修改提示詞 (prompt hacking) 以達到預期結果，其建議研究者可以嘗試「受控的變形」，但應報告完整提示詞。</li>
+                <li>Gao 等人 (2025) 建議數位分身研究應表明其使用的模型、版本號、參數大小、查詢日期、使用介面、提示詞等資訊。</li>
+            </ul>
+        </section>
+        <section>
+            <span class="step-no">11</span>
             <h2>未來延伸：串接 API</h2>
             <p>完成本地前測與 prompt 凍結後，可串接 API 擴大樣本規模，並保留成本、模型版本與設定紀錄。</p>
         </section>
-        <footer>本頁為本地端探索性模擬流程演示。</footer>
+        <section>
+            <h2>參考文獻</h2>
+            <ol class="references">
+                <li>Argyle, L. P., Busby, E. C., Fulda, N., Gubler, J. R., Rytting, C., & Wingate, D. (2023). Out of one, many: Using language models to simulate human samples. <i>Political Analysis</i>, <i>31</i>(3), 337–351. https://doi.org/10.1017/pan0.2023.2</li>
+                <li>Gao, Y., Lee, D., Burtch, G., & S. Fazelpour. (2025). Take caution in using LLMs as human surrogates. <i>Proc. Natl. Acad. Sci. U.S.A. 122</i> (24) e2501660122, https://doi.org/10.1073/pnas.2501660122</li>
+                <li>Horton, J. J., Filippas, A., & Manning, B. S. (2026). Large Language Models as Simulated Economic Agents: What Can We Learn from Homo Silicus? arXiv:2301.07543.</li>
+                <li>Lin Z. (2026). Large Language Models as Psychological Simulators: A Methodological Guide. <i>Advances in Methods and Practices in Psychological Science</i>. <i>9</i>(1). https://doi.org/10.1177/25152459251410153</li>
+            </ol>
+        </section>
+        <footer>
+            <span>© <span id="year"></span> Eric Yeh</span>
+            <span>Built with plain HTML, CSS &amp; curiosity.</span>
+        </footer>
     </main>
+    <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
