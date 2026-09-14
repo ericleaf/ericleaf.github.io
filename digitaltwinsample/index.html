@@ -18,9 +18,9 @@
             <h2>前言</h2>
             <div class="two">
                 <article>
-                    <h3>數位分身 (digital twin)</h3>
+                    <h3>數位分身（digital twin）</h3>
                     <p>是指透過輸入真實實體之資料，以虛擬模型模擬而來的數位實體，可模擬真實世界的行為與狀態。</p>
-                    <p>用於社會科學調查時，又稱為矽樣本 (silicon sample)，其反映真實世界的能力，稱為演算法忠實度 (algorithmic fidelity) (Argyle et al., 2023)。</p>
+                    <p>用於社會科學調查時，又稱為矽樣本（silicon sample），其反映真實世界的能力，稱為演算法忠實度（algorithmic fidelity）（Argyle et al., 2023）。</p>
                 </article>
                 <article>
                     <h3>高放射性廢棄物最終處置</h3>
@@ -36,13 +36,36 @@
                 <li>LLM數位分身構成的回答與真人有多大的一致性？</li>
                 <li>LLM數位分身能否重現真人問卷的態度關聯？</li>
             </ol>
+            <p>本模擬僅簡略地輸入受訪者之人口背景與部分核能相關變數，預測其地方接受度，與正式研究不同。</p>
+            <p>在正式研究中，係以真人問卷資料之除以下研究架構圖以外的所有變數作為LLM的輸入，再將LLM生成的風險知覺、一般處置接受與地方接受與真人問卷的關係做對比。</p>
             <figure class="research-figure">
                 <img src="image/pic1.png" alt="研究變數顯著影響示意圖">
-                <figcaption>本研究已有真人民調資料，且圖中所呈現的變數皆呈現顯著影響。<br>圖片來源：吳聲佑、蕭乃沂、葉宗諭，2026</figcaption>
+                <figcaption>〈真人與數位分身的調查一致性：高放射性廢棄物社會許可中介模型的演算法忠實度檢驗〉研究架構圖<br>圖片來源：吳聲佑、蕭乃沂、葉宗諭，2026</figcaption>
             </figure>
         </section>
         <section>
             <span class="step-no">03</span>
+            <h2>數位分身研究應注意的細節</h2>
+            <h3>研究設計方面：</h3>
+            <ul class="tips">
+                <li>Argyle 等人（2023）的實證研究顯示模型的溫度（temperature）在 0.7 會比較接近人類。</li>
+                <li>最強的模型不一定最像人，或更能反映人類行為（Gao et al, 2025）。</li>
+                <li>同一角色設定、同樣提示詞的重複呼叫不能當作多人模擬（Lin, 2026）。</li>
+                <li>角色設定、提示詞、語言、推理提示（如「請像人類思考」）都會對輸出結果有影響（Gao et al, 2025）。</li>
+                <li>應限制LLM的回答格式，便於統計，如限制輸出長度或JSON格式（Sun et al., 2024; Koaik et al., 2026）。</li>
+                <li>可以讓LLM提供理由，但不做為主要分析對象，甚至有時理由可能與選項矛盾（Gao et al, 2025）。</li>
+                <li>Larooij 與 Törnberg（2026）指出，因LLM的輸出具隨機性，單次模擬的結果可能不具代表性，應嘗試多次模擬並統計次數。</li>
+                <li>Lin（2026）甚至主張應該使用開源權重模型作為模擬的預設選項，確保研究結果的可重現性。</li>
+            </ul>
+            <h3>報告研究結果方面：</h3>
+            <ul class="tips">
+                <li>Horton 等人（2026）指出研究者可能反覆修改提示詞（prompt hacking）以達到預期結果，其建議研究者可以嘗試「受控的變形」，但應報告完整提示詞。</li>
+                <li>Gao 等人（2025）建議數位分身研究應表明其使用的模型、版本號、參數大小、查詢日期、使用介面、提示詞等資訊。</li>
+            </ul>
+            <blockquote>Ronald Coase: "If you torture the data long enough, it will confess to anything."<br>（引自 Gao et al., 2025）</blockquote>
+        </section>
+        <section>
+            <span class="step-no">04</span>
             <h2>我的電腦配置</h2>
             <div class="specs">
                 <article><b>GPU</b><strong>RTX 4050</strong><small>6 GB VRAM</small></article>
@@ -51,18 +74,18 @@
             </div>
         </section>
         <section>
-            <span class="step-no">04</span>
+            <span class="step-no">05</span>
             <h2>建立本地模型環境</h2>
             <ol class="walkthrough">
-                <li><b>安裝 Python</b><code>winget install Python.Python.3.12</code></li>
-                <li><b>安裝 <a href="https://ollama.com/search" style="color: #2563a9 !important; text-decoration: underline;">Ollama</a></b><code>winget install Ollama.Ollama</code></li>
+                <li><b>安裝 <a href="https://www.python.org/downloads/" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">Python</a></b><code>winget install Python.Python.3.12</code></li>
+                <li><b>安裝 <a href="https://ollama.com/search" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">Ollama</a></b><code>winget install Ollama.Ollama</code></li>
                 <li><b>安裝套件</b><code>pip install pandas openpyxl ollama</code></li>
                 <li><b>測試模型</b><code>ollama pull qwen3:8b</code></li>
             </ol>
             <p>以下展示結果以Qwen3 8B模型為例。</p>
         </section>
         <section>
-            <span class="step-no">05</span>
+            <span class="step-no">06</span>
             <h2>準備範例問卷資料</h2>
             <p>測試所使用的 persona 設定資料其中一列如下：</p>
             <div class="table-wrap">
@@ -708,7 +731,7 @@ if __name__ == "__main__":
             </div>
         </section>
         <section>
-            <span class="step-no">07</span>
+            <span class="step-no">08</span>
             <h2>每個樣本重複執行 10 次</h2>
             <p>移除固定 seed、維持 temperature = 0.7。15 位受訪者 × 10 次，共 150 次模擬；輸出 raw results、summary 與 population comparison。</p>
             <div class="result">
@@ -732,7 +755,7 @@ if __name__ == "__main__":
             </div>
         </section>
         <section>
-            <span class="step-no">08</span>
+            <span class="step-no">09</span>
             <h2>多模型比較</h2>
             <p>以下整理同一份 15 位受訪者問卷資料的本地數位分身測試。重複模擬用於觀察模型輸出的穩定性；單次測試則作為初步行為特徵比較。</p>
             <div class="table-wrap">
@@ -793,50 +816,34 @@ if __name__ == "__main__":
             </div>
         </section>
         <section>
-            <span class="step-no">09</span>
+            <span class="step-no">10</span>
             <h2>解讀結果</h2>
             <div class="two">
                 <article>
-                    <h3>可靠度</h3>
-                    <p>同一 persona 的重複回答多半相近。</p>
+                    <h3>信度</h3>
+                    <p>同一人物設定的重複回答多半相近。</p>
                 </article>
                 <article>
                     <h3>效度</h3>
-                    <p>高一致性不等於高 human fidelity；仍須以真人問卷逐筆驗證。</p>
+                    <p>高一致性不等於高效度，仍須以真人問卷逐筆驗證，本模擬之實測結果較差。</p>
                 </article>
             </div>
-            <blockquote>High intra-persona consistency ≠ High human fidelity.</blockquote>
-        </section>
-        <section>
-            <span class="step-no">10</span>
-            <h2>數位分身研究應注意的細節</h2>
-            <h3>研究設計方面：</h3>
-            <ul class="tips">
-                <li>Argyle 等人 (2023) 的實證研究顯示模型的溫度在 0.7 會比較接近人類 (但不是唯一答案)。</li>
-                <li>最強的模型不一定最像人，或更能反映人類行為 (Gao et al, 2025)。</li>
-                <li>同一角色設定、同樣提示詞的重複呼叫不能當作多人模擬 (Lin, 2026)。</li>
-                <li>角色設定、提示詞、語言、推理提示 (如「請像人類思考」) 都會對輸出結果有影響 (Gao et al, 2025)。</li>
-
-                <li>Lin (2026) 甚至主張應該使用開源權重模型作為模擬的預設選項，確保研究結果的可重現性。</li>
-            </ul>
-            <h3>報告研究結果方面：</h3>
-            <ul class="tips">
-                <li>Horton 等人 (2026) 指出研究者可能反覆修改提示詞 (prompt hacking) 以達到預期結果，其建議研究者可以嘗試「受控的變形」，但應報告完整提示詞。</li>
-                <li>Gao 等人 (2025) 建議數位分身研究應表明其使用的模型、版本號、參數大小、查詢日期、使用介面、提示詞等資訊。</li>
-            </ul>
         </section>
         <section>
             <span class="step-no">11</span>
             <h2>未來延伸：串接 API</h2>
-            <p>完成本地前測與 prompt 凍結後，可串接 API 擴大樣本規模，並保留成本、模型版本與設定紀錄。</p>
+            <p>完成本機模擬後，下一步可串接 API 進行模擬，使用性能更強之模型，並輸入更多樣本之資訊，最後與真人資料進行比對。</p>
         </section>
         <section>
             <h2>參考文獻</h2>
             <ol class="references">
-                <li>Argyle, L. P., Busby, E. C., Fulda, N., Gubler, J. R., Rytting, C., & Wingate, D. (2023). Out of one, many: Using language models to simulate human samples. <i>Political Analysis</i>, <i>31</i>(3), 337–351. https://doi.org/10.1017/pan0.2023.2</li>
-                <li>Gao, Y., Lee, D., Burtch, G., & S. Fazelpour. (2025). Take caution in using LLMs as human surrogates. <i>Proc. Natl. Acad. Sci. U.S.A. 122</i> (24) e2501660122, https://doi.org/10.1073/pnas.2501660122</li>
-                <li>Horton, J. J., Filippas, A., & Manning, B. S. (2026). Large Language Models as Simulated Economic Agents: What Can We Learn from Homo Silicus? arXiv:2301.07543.</li>
-                <li>Lin Z. (2026). Large Language Models as Psychological Simulators: A Methodological Guide. <i>Advances in Methods and Practices in Psychological Science</i>. <i>9</i>(1). https://doi.org/10.1177/25152459251410153</li>
+                <li>Argyle, L. P., Busby, E. C., Fulda, N., Gubler, J. R., Rytting, C., & Wingate, D. (2023). Out of one, many: using language models to simulate human samples. <i>Political Analysis</i>, <i>31</i>(3), 337–351. <a href="https://doi.org/10.1017/pan.2023.2" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.1017/pan.2023.2</a></li>
+                <li>Gao, Y., Lee, D., Burtch, G., & S. Fazelpour. (2025). Take caution in using LLMs as human surrogates. <i>Proc. Natl. Acad. Sci. U.S.A. 122</i> (24) e2501660122, <a href="https://doi.org/10.1073/pnas.2501660122" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.1073/pnas.2501660122</a></li>
+                <li>Horton, J. J., Filippas, A., & Manning, B. S. (2026). <i>Large language models as simulated economic agents: what can we learn from homo silicus?</i> (No. w31122). National Bureau of Economic Research. <a href="https://doi.org/10.48550/arXiv.2301.07543" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.48550/arXiv.2301.07543</a></li>
+                <li>Koaik, F., Gupta, A., & Sheikh, F. R. (2026). LLM powered social digital twins: a framework for simulating population behavioral response to policy interventions. <i>arXiv preprint arXiv:2601.06111</i>. <a href="https://doi.org/10.48550/arXiv.2601.06111" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.48550/arXiv.2601.06111</a></li>
+                <li>Larooij, M., Törnberg, P. Validation is the central challenge for generative social simulation: a critical review of LLMs in agent-based modeling. (2026) <i>Artif Intell Rev, 59</i>(15). <a href="https://doi.org/10.1007/s10462-025-11412-6" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.1007/s10462-025-11412-6</a></li>
+                <li>Lin Z. (2026). Large language models as psychological simulators: a methodological guide. <i>Advances in Methods and Practices in Psychological Science</i>. <i>9</i>(1). <a href="https://doi.org/10.1177/25152459251410153" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.1177/25152459251410153</a></li>
+                <li>Sun, S., Lee, E., Nan, D., Zhao, X., Lee, W., Jansen, B. J., & Kim, J. H. (2024). Random silicon sampling: simulating human sub-population opinion using a large language model based on group-level demographic information. <i>arXiv preprint arXiv:2402.18144</i>. <a href="https://doi.org/10.48550/arXiv.2402.18144" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.48550/arXiv.2402.18144</a></li>
             </ol>
         </section>
         <footer>
