@@ -3,14 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>本機數位分身模擬演示</title>
+    <title>本機數位分身模擬演示｜Eric Yeh</title>
     <link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="twin.css">
+    <script src="../scrollbar.js" defer></script>
 </head>
 <body>
     <main class="twin-demo">
         <header class="demo-hero">
             <p>LOCAL LLM / EXPERIMENTAL WALKTHROUGH</p>
-            <h1>本機數位分身模擬演示</h1>
+            <h1>本機<span class="demo-title-highlight">數位分身</span><span class="demo-title-tail">模擬演示</span></h1>
             <div>當我們已有問卷資料，如何不產生額外花費而測試提示詞？</div>
         </header>
         <section>
@@ -20,7 +21,7 @@
                 <article>
                     <h3>數位分身（digital twin）</h3>
                     <p>是指透過輸入真實實體之資料，以虛擬模型模擬而來的數位實體，可模擬真實世界的行為與狀態。</p>
-                    <p>用於社會科學調查時，又稱為矽樣本（silicon sample），其反映真實世界的能力，稱為演算法忠實度（algorithmic fidelity）（Argyle et al., 2023）。</p>
+                    <p>近年許多研究使用LLM模擬人類樣本進行社會科學調查。其反映真實世界的能力，稱為演算法忠實度（algorithmic fidelity）（Argyle et al., 2023）。</p>
                 </article>
                 <article>
                     <h3>高放射性廢棄物最終處置</h3>
@@ -37,10 +38,10 @@
                 <li>LLM數位分身能否重現真人問卷的態度關聯？</li>
             </ol>
             <p>本模擬僅簡略地輸入受訪者之人口背景與部分核能相關變數，預測其地方接受度，與正式研究不同。</p>
-            <p>在正式研究中，係以真人問卷資料之除以下研究架構圖以外的所有變數作為LLM的輸入，再將LLM生成的風險知覺、一般處置接受與地方接受與真人問卷的關係做對比。</p>
+            <p>在正式研究中，係以真人問卷資料之除以下變數影響關係圖以外的所有變數作為LLM的輸入，再將LLM生成的風險知覺、一般處置接受與地方接受與真人問卷的關係做對比。</p>
             <figure class="research-figure">
                 <img src="image/pic1.png" alt="研究變數顯著影響示意圖">
-                <figcaption>〈真人與數位分身的調查一致性：高放射性廢棄物社會許可中介模型的演算法忠實度檢驗〉研究架構圖<br>圖片來源：吳聲佑、蕭乃沂、葉宗諭，2026</figcaption>
+                <figcaption>〈真人與數位分身的調查一致性：高放射性廢棄物社會許可中介模型的演算法忠實度檢驗〉變數影響關係圖<br>圖片來源：吳聲佑、蕭乃沂、葉宗諭，2026</figcaption>
             </figure>
         </section>
         <section>
@@ -80,14 +81,15 @@
                 <li><b>安裝 <a href="https://www.python.org/downloads/" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">Python</a></b><code>winget install Python.Python.3.12</code></li>
                 <li><b>安裝 <a href="https://ollama.com/search" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">Ollama</a></b><code>winget install Ollama.Ollama</code></li>
                 <li><b>安裝套件</b><code>pip install pandas openpyxl ollama</code></li>
-                <li><b>測試模型</b><code>ollama pull qwen3:8b</code></li>
+                <li><b>安裝模型</b><code>ollama pull qwen3:8b</code></li>
+                <li><b>測試模型</b><code>ollama run qwen3:8b</code></li>
             </ol>
             <p>以下展示結果以Qwen3 8B模型為例。</p>
         </section>
         <section>
             <span class="step-no">06</span>
             <h2>準備範例問卷資料</h2>
-            <p>測試所使用的 persona 設定資料其中一列如下：</p>
+            <p>測試所使用的人物設定資料其中一列如下：</p>
             <div class="table-wrap">
                 <table>
                     <thead>
@@ -120,12 +122,13 @@
                             <td>非常不同意</td>
                         </tr>
                         <tr>
-                            <td colspan="11">註：原始測試資料共 15 列。<br>
-                                原始題目：<br>
-                                Q35、請問您對「政府能夠妥善監督與管理核廢料」有沒有信心？<br>
-                                Q51、請問您同不同意「隨著科學技術的進步，未來核能發電將愈來愈安全」？<br>
-                                Q8、國際上把核廢料分為「低階核廢料」、「中階核廢料」以及「高階核廢料」，請問哪一種不包括在我國對核廢料的分類裡面？<br>
-                                Q14、假如您現在居住的「鄉鎮市區」符合存放核廢料的科學條件，請問您同不同意政府在「您居住的鄉鎮市區」蓋核廢料貯存場？
+                            <td colspan="11">註：原始測試資料共 15 列。原始題目如下：
+                                <ol>
+                                    <li>Q35、請問您對「政府能夠妥善監督與管理核廢料」有沒有信心？（政府信心）</li>
+                                    <li>Q51、請問您同不同意「隨著科學技術的進步，未來核能發電將愈來愈安全」？（核能安全態度）</li>
+                                    <li>Q8、國際上把核廢料分為「低階核廢料」、「中階核廢料」以及「高階核廢料」，請問哪一種不包括在我國對核廢料的分類裡面？（核廢料分類知識）</li>
+                                    <li>Q14、假如您現在居住的「鄉鎮市區」符合存放核廢料的科學條件，請問您同不同意政府在「您居住的鄉鎮市區」蓋核廢料貯存場？（真人答案）</li>
+                                </ol>
                             </td>
                         </tr>
                     </tbody>
@@ -136,7 +139,7 @@
                 <span class="step-no">06</span>
                 <h2>以 Qwen3 執行 15 個樣本</h2>
                 <p>正確率：2/15（其中一次執行錯誤）</p>
-                <details class="code-details"><summary>顯示完整程式碼</summary><pre><code>import json
+                <details class="code-details"><summary>顯示完整程式碼</summary><div class="code-details-content"><div class="code-details-inner"><pre><code>import json
 import time
 import os
 import pandas as pd
@@ -638,7 +641,7 @@ def main():
 if __name__ == "__main__":
     main()</code>
 </pre>
-</details>
+</div></div></details>
     <h3>提供給模型的提示詞：ID 1760</h3>
     <pre><code>你是一個用於社會科學研究的模擬受訪者系統。
 你的任務是根據已知受訪者資料，
@@ -733,7 +736,7 @@ if __name__ == "__main__":
         <section>
             <span class="step-no">08</span>
             <h2>每個樣本重複執行 10 次</h2>
-            <p>移除固定 seed、維持 temperature = 0.7。15 位受訪者 × 10 次，共 150 次模擬；輸出 raw results、summary 與 population comparison。</p>
+            <p>移除固定種子、維持溫度為 0.7。15 位受訪者 × 10 次，共 150 次模擬；輸出原始結果、各樣本總結與總體比較。</p>
             <div class="result">
                 <b>重複實驗觀察</b>
                 <p>模型通常高度一致，但回答仍可能集中於中間選項。</p>
@@ -757,7 +760,7 @@ if __name__ == "__main__":
         <section>
             <span class="step-no">09</span>
             <h2>多模型比較</h2>
-            <p>以下整理同一份 15 位受訪者問卷資料的本地數位分身測試。重複模擬用於觀察模型輸出的穩定性；單次測試則作為初步行為特徵比較。</p>
+            <p>以下整理同一份 15 位受訪者問卷資料的本機數位分身測試，重複模擬用於觀察模型輸出的穩定性。</p>
             <div class="table-wrap">
                 <table>
                     <thead>
@@ -772,8 +775,8 @@ if __name__ == "__main__":
                         <tr>
                             <td>Qwen3 8B</td>
                             <td>15 人 × 10 次</td>
-                            <td>輸出多集中於「不太同意」與「還算同意」；技術成功率約 94.7%，同一 persona 的回答穩定。</td>
-                            <td>中間化傾向明顯、極端態度遭壓縮；逐筆正確率約 10.6%。</td>
+                            <td>輸出多集中於「不太同意」與「還算同意」；技術成功率約 94.7%，同一人物設定的回答穩定。</td>
+                            <td>中間化傾向明顯、極端態度遭壓縮；總體正確率約 10.6%。</td>
                         </tr>
                         <tr>
                             <td>Llama 3.1 8B</td>
@@ -785,31 +788,31 @@ if __name__ == "__main__":
                             <td>Gemma 3 12B</td>
                             <td>15 人單次測試</td>
                             <td>回答分布於負向與中間選項，未出現「非常同意」。</td>
-                            <td>呈現中間化，且缺少重複測試以評估穩定性。</td>
+                            <td>呈現中間化，尚未重複測試以評估穩定性。</td>
                         </tr>
                         <tr>
                             <td>Mistral NeMo 12B</td>
                             <td>15 人單次測試</td>
-                            <td>可產生 persona 間的回答差異。</td>
-                            <td>具有較強的負向／NIMBY 預設傾向，可能主導回答。</td>
+                            <td>預測正確率為 26.7%；「非常不同意」回答居多。</td>
+                            <td>具有較強的負向預設傾向，可能主導回答。</td>
                         </tr>
                         <tr>
                             <td>Phi-4 14B</td>
                             <td>15 人 × 10 次</td>
-                            <td>148／150 次有效；多數回答為「不太同意」，重複結果穩定，逐筆正確率約 17.6%。</td>
+                            <td>148／150 次有效；多數回答為「不太同意」，重複結果穩定，總體正確率約 17.6%。</td>
                             <td>仍壓縮極端態度；與真人答案的排序相關接近零。</td>
                         </tr>
                         <tr>
                             <td>DeepSeek-R1 7B</td>
                             <td>15 人單次測試</td>
-                            <td>可提供推理式說明，呈現較溫和的負向傾向。</td>
+                            <td>幾乎全部回答「不太同意」，少變異。</td>
                             <td>容易過度推理，且出現繁簡混用與回答格式控制問題。</td>
                         </tr>
                         <tr>
-                            <td>TAIDE 8B</td>
+                            <td>TAIDE 8B (Llama 3.1)</td>
                             <td>15 人 × 10 次</td>
-                            <td>149／150 次有效；75.8% 回答為「還算同意」，同一 persona 的主答案比例約 96%。</td>
-                            <td>穩定地偏向正向中間選項；逐筆正確率約 6.0%，persona 層級相關偏低。</td>
+                            <td>149／150 次有效；75.8% 回答為「還算同意」，同一人物設定的主答案比例約 96%。</td>
+                            <td>穩定地偏向正向中間選項；總體正確率約 6.0%，人物設定層級相關偏低。</td>
                         </tr>
                     </tbody>
                 </table>
@@ -852,5 +855,27 @@ if __name__ == "__main__":
         </footer>
     </main>
     <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+    <script>
+        const codeDetails = document.querySelector('.code-details');
+        const codeSummary = codeDetails?.querySelector('summary');
+        let codeCloseTimer;
+
+        codeSummary?.addEventListener('click', (event) => {
+            event.preventDefault();
+            clearTimeout(codeCloseTimer);
+
+            if (codeDetails.classList.contains('is-open')) {
+                codeDetails.classList.remove('is-open');
+                codeCloseTimer = setTimeout(() => {
+                    codeDetails.open = false;
+                }, 320);
+                return;
+            }
+
+            codeDetails.open = true;
+            void codeDetails.offsetHeight;
+            codeDetails.classList.add('is-open');
+        });
+    </script>
 </body>
 </html>

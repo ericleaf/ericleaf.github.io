@@ -32,6 +32,10 @@
     letter-spacing: -.05em;
 }
 
+.demo-title-highlight {
+    color: var(--blue);
+}
+
 .demo-hero div {
     color: var(--muted);
     font-size: 1.15rem;
@@ -40,7 +44,7 @@
 
 .twin-demo section {
     position: relative;
-    padding: 52px 0 0;
+    padding: 25px 0 0;
 }
 
 .twin-demo h2 {
@@ -104,6 +108,47 @@
     gap: 14px;
     padding: 14px 0;
     border-bottom: 1px solid var(--line);
+}
+
+.code-details summary {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    list-style: none;
+}
+
+.code-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.code-details summary::before {
+    content: "▶";
+    display: inline-block;
+    margin-right: 7px;
+    font-size: .7em;
+    transform: rotate(0deg);
+    transition: transform .3s ease;
+}
+
+.code-details.is-open summary::before {
+    transform: rotate(90deg);
+}
+
+.code-details-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows .3s ease, opacity .3s ease;
+}
+
+.code-details.is-open .code-details-content {
+    grid-template-rows: 1fr;
+    opacity: 1;
+}
+
+.code-details-inner {
+    min-height: 0;
+    overflow: hidden;
 }
 
 code,
@@ -180,6 +225,7 @@ blockquote {
     left: 50%;
     width: calc(100vw - 68px);
     max-width: 1052px;
+    padding-bottom: 32px;
     transform: translateX(-50%);
 }
 
@@ -190,6 +236,10 @@ blockquote {
 
     .demo-hero {
         padding-bottom: 42px;
+    }
+
+    .demo-title-tail {
+        display: block;
     }
 
     .specs,
@@ -209,8 +259,12 @@ blockquote {
         padding-top: 40px;
     }
 
+}
+
+@media (max-width: 650px) {
     .twin-demo footer {
         width: calc(100vw - 40px);
+        padding-bottom: 26px;
     }
 }
 
@@ -250,6 +304,7 @@ blockquote {
 }
 
 .references {
+    margin-bottom: 0;
     color: var(--muted);
 }
 
@@ -258,8 +313,13 @@ blockquote {
     font-size: .85rem;
 }
 
+.references li:last-child {
+    margin-bottom: 0;
+}
+
 .twin-demo {
     padding-top: 36px;
+    padding-bottom: 0;
 }
 
 .demo-hero {
@@ -280,4 +340,11 @@ blockquote {
 .restored p {
     color: var(--muted);
     line-height: 1.9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .code-details summary::before,
+    .code-details-content {
+        transition: none;
+    }
 }
