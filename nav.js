@@ -18,7 +18,16 @@ document.querySelectorAll('.nav').forEach((nav) => {
 
   nav.querySelectorAll('.research-menu').forEach((menu) => {
     const summary = menu.querySelector('summary');
+    const dropdown = menu.querySelector('.research-dropdown');
     let closeTimer;
+
+    const finishClose = () => {
+      if (!menu.classList.contains('is-open')) menu.open = false;
+    };
+
+    dropdown?.addEventListener('transitionend', (event) => {
+      if (event.propertyName === 'opacity') finishClose();
+    });
 
     summary.addEventListener('click', (event) => {
       event.preventDefault();
@@ -26,9 +35,7 @@ document.querySelectorAll('.nav').forEach((nav) => {
 
       if (menu.classList.contains('is-open')) {
         menu.classList.remove('is-open');
-        closeTimer = setTimeout(() => {
-          menu.open = false;
-        }, 200);
+        closeTimer = setTimeout(finishClose, 260);
         return;
       }
 

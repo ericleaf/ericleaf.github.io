@@ -10,7 +10,7 @@
 <body>
     <main class="twin-demo">
         <header class="demo-hero">
-            <p>LOCAL LLM / EXPERIMENTAL WALKTHROUGH</p>
+            <p>LOCAL LLM / DIGITAL TWIN</p>
             <h1>本機<span class="demo-title-highlight">數位分身</span><span class="demo-title-tail">模擬演示</span></h1>
             <div>當我們已有問卷資料，如何不產生額外花費而測試提示詞？</div>
         </header>
@@ -56,11 +56,11 @@
                 <li>應限制LLM的回答格式，便於統計，如限制輸出長度或JSON格式（Sun et al., 2024; Koaik et al., 2026）。</li>
                 <li>可以讓LLM提供理由，但不做為主要分析對象，甚至有時理由可能與選項矛盾（Gao et al, 2025）。</li>
                 <li>Larooij 與 Törnberg（2026）指出，因LLM的輸出具隨機性，單次模擬的結果可能不具代表性，應嘗試多次模擬並統計次數。</li>
-                <li>Lin（2026）甚至主張應該使用開源權重模型作為模擬的預設選項，確保研究結果的可重現性。</li>
+                <li>Lin（2026）甚至主張應該使用開源權重模型（open-weight models）作為模擬的預設選項，確保研究結果的可重現性。</li>
             </ul>
             <h3>報告研究結果方面：</h3>
             <ul class="tips">
-                <li>Horton 等人（2026）指出研究者可能反覆修改提示詞（prompt hacking）以達到預期結果，其建議研究者可以嘗試「受控的變形」，但應報告完整提示詞。</li>
+                <li>Horton 等人（2026）指出研究者可能反覆修改提示詞（prompt hacking）以達到預期結果，其建議研究者可以嘗試「受控的變形」（controlled perturbation），並報告完整提示詞。</li>
                 <li>Gao 等人（2025）建議數位分身研究應表明其使用的模型、版本號、參數大小、查詢日期、使用介面、提示詞等資訊。</li>
             </ul>
             <blockquote>Ronald Coase: "If you torture the data long enough, it will confess to anything."<br>（引自 Gao et al., 2025）</blockquote>
@@ -800,7 +800,7 @@ if __name__ == "__main__":
                             <td>Phi-4 14B</td>
                             <td>15 人 × 10 次</td>
                             <td>148／150 次有效；多數回答為「不太同意」，重複結果穩定，總體正確率約 17.6%。</td>
-                            <td>仍壓縮極端態度；與真人答案的排序相關接近零。</td>
+                            <td>仍有中間化傾向。</td>
                         </tr>
                         <tr>
                             <td>DeepSeek-R1 7B</td>
