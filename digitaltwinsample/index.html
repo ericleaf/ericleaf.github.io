@@ -56,6 +56,7 @@
                 <li>應限制LLM的回答格式，便於統計，如限制輸出長度或JSON格式（Sun et al., 2024; Koaik et al., 2026）。</li>
                 <li>可以讓LLM提供理由，但不做為主要分析對象，甚至有時理由可能與選項矛盾（Gao et al, 2025）。</li>
                 <li>Larooij 與 Törnberg（2026）指出，因LLM的輸出具隨機性，單次模擬的結果可能不具代表性，應嘗試多次模擬並統計次數。</li>
+                <li>越多 persona 資料不一定能提高預測準確率，反而是與預測目標相關的信念、開放式背景故事、質性訪談文本可能更有效 (Chuang et al., 2024; Moon et al., 2024; Park et al., 2026)</li>
                 <li>Lin（2026）甚至主張應該使用開源權重模型（open-weight models）作為模擬的預設選項，確保研究結果的可重現性。</li>
             </ul>
             <h3>報告研究結果方面：</h3>
@@ -156,7 +157,7 @@ OUTPUT_DIR = "output"
 
 OUTPUT_FILE = os.path.join(
     OUTPUT_DIR,
-    "survey_taide_result.xlsx"
+    "survey_qwen_result.xlsx"
 )
 
 MODEL_NAME = "qwen3:8b"
@@ -642,6 +643,7 @@ if __name__ == "__main__":
     main()</code>
 </pre>
 </div></div></details>
+    <p>註：以上程式碼由 <a href="https://chatgpt.com/share/6a847654-6794-83e8-a634-21a3017a966f" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">ChatGPT</a> 協助生成（事先提供數位分身相關文獻，再請其一步一步說明步驟）。</p>
     <h3>提供給模型的提示詞：ID 1760</h3>
     <pre><code>你是一個用於社會科學研究的模擬受訪者系統。
 你的任務是根據已知受訪者資料，
@@ -841,11 +843,14 @@ if __name__ == "__main__":
             <h2>參考文獻</h2>
             <ol class="references">
                 <li>Argyle, L. P., Busby, E. C., Fulda, N., Gubler, J. R., Rytting, C., & Wingate, D. (2023). Out of one, many: using language models to simulate human samples. <i>Political Analysis</i>, <i>31</i>(3), 337–351. <a href="https://doi.org/10.1017/pan.2023.2" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.1017/pan.2023.2</a></li>
+                <li>Chuang, Y.-S., Nirunwiroj, K., Studdiford, Z., Goyal, A., Frigo, V. V., Yang, S., Shah, D. V., Hu, J., & Rogers, T. T. (2024). Virtual Personas for Language Models via an Anthology of Backstories. In Al-Onaizan, Y., Bansal, M., Chen, Y.-N. (Ed.), <i>Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing</i> (pp. 14010–14026). Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/2024.findings-emnlp.819" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.18653/v1/2024.findings-emnlp.819</a></li>
                 <li>Gao, Y., Lee, D., Burtch, G., & S. Fazelpour. (2025). Take caution in using LLMs as human surrogates. <i>Proc. Natl. Acad. Sci. U.S.A. 122</i> (24) e2501660122, <a href="https://doi.org/10.1073/pnas.2501660122" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.1073/pnas.2501660122</a></li>
                 <li>Horton, J. J., Filippas, A., & Manning, B. S. (2026). <i>Large language models as simulated economic agents: what can we learn from homo silicus?</i> (No. w31122). National Bureau of Economic Research. <a href="https://doi.org/10.48550/arXiv.2301.07543" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.48550/arXiv.2301.07543</a></li>
                 <li>Koaik, F., Gupta, A., & Sheikh, F. R. (2026). LLM powered social digital twins: a framework for simulating population behavioral response to policy interventions. <i>arXiv preprint arXiv:2601.06111</i>. <a href="https://doi.org/10.48550/arXiv.2601.06111" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.48550/arXiv.2601.06111</a></li>
                 <li>Larooij, M., Törnberg, P. Validation is the central challenge for generative social simulation: a critical review of LLMs in agent-based modeling. (2026) <i>Artif Intell Rev, 59</i>(15). <a href="https://doi.org/10.1007/s10462-025-11412-6" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.1007/s10462-025-11412-6</a></li>
-                <li>Lin Z. (2026). Large language models as psychological simulators: a methodological guide. <i>Advances in Methods and Practices in Psychological Science</i>. <i>9</i>(1). <a href="https://doi.org/10.1177/25152459251410153" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.1177/25152459251410153</a></li>
+                <li>Lin, Z. (2026). Large language models as psychological simulators: a methodological guide. <i>Advances in Methods and Practices in Psychological Science</i>. <i>9</i>(1). <a href="https://doi.org/10.1177/25152459251410153" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.1177/25152459251410153</a></li>
+                <li>Moon, S., Abdulhai, M., Kang, M., Suh, J., Soedarmadji, W., Behar, E. K., & Chan. D. M. (2024). Virtual Personas for Language Models via an Anthology of Backstories. In Al-Onaizan, Y., Bansal, M., Chen, Y.-N. (Ed.), <i>Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing</i> (pp. 19864–19897). Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/2024.emnlp-main.1110" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.18653/v1/2024.emnlp-main.1110</a></li>
+                <li>Park, J. S., Zou, C. Q., Kamphorst, J., Egan, N., Shaw, A., Hill, B. M., Cai, C., Morris, M. R., Liang, P., Willer, R., & Bernstein, M. S. (2026). LLM Agents Grounded in Self-Reports Enable General-Purpose Simulation of Individuals. <i>arXiv preprint arXiv:2411.10109.</i> <a href="https://doi.org/10.48550/arXiv.2411.10109" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.48550/arXiv.2411.10109</a></li>
                 <li>Sun, S., Lee, E., Nan, D., Zhao, X., Lee, W., Jansen, B. J., & Kim, J. H. (2024). Random silicon sampling: simulating human sub-population opinion using a large language model based on group-level demographic information. <i>arXiv preprint arXiv:2402.18144</i>. <a href="https://doi.org/10.48550/arXiv.2402.18144" target="_blank" style="color: #2563a9 !important; text-decoration: underline;">https://doi.org/10.48550/arXiv.2402.18144</a></li>
             </ol>
         </section>
